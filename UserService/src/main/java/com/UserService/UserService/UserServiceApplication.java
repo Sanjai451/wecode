@@ -15,7 +15,7 @@ public class UserServiceApplication {
 		SpringApplication.run(UserServiceApplication.class, args);
 	}
 
-	@GetMapping("/user/hi")
+	@GetMapping("/")
 	public String sayHi() {
 		return "Hi from User Service";
 	}
