@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Data
@@ -48,4 +49,11 @@ public class Problem {
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
+
+    @OneToMany(
+            mappedBy = "problem",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<TestCase> testCases;
 }
