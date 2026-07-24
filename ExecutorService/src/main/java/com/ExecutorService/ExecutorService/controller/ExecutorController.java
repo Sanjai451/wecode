@@ -16,7 +16,7 @@ public class ExecutorController {
     @Autowired
     private CodeExecutorService executorService;
 
-    @PostMapping("/")
+    @PostMapping("/code")
     public ResponseEntity<CodeExecutionResults> executeCode(@RequestBody CodeExecRequest req){
         return new ResponseEntity<>(executorService.executeCode(
                 req.getCode(),

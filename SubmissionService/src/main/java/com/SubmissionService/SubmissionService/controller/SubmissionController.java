@@ -30,13 +30,22 @@ public class SubmissionController {
         return ResponseEntity.ok(submissionService.getSubmission(id));
     }
 
-    @GetMapping("/me")
-    public ResponseEntity<List<SubmissionResponse>> getMySubmissions(@RequestHeader("X-USER-ID") UUID userId) {
-        return ResponseEntity.ok(submissionService.getSubmissionsByUser(userId));
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<SubmissionResponse>> getUserSubmissions(
+            @PathVariable UUID userId) {
+
+        return ResponseEntity.ok(
+                submissionService.getAllSubmissionsByUser(userId)
+        );
     }
 
-    @GetMapping("/problems/{problemId}")
-    public ResponseEntity<List<SubmissionResponse>> getProblemSubmissions(@PathVariable Integer problemId) {
-        return ResponseEntity.ok(submissionService.getSubmissionsByProblem(problemId));
+    @GetMapping("/user/{userId}/problem/{problemId}")
+    public ResponseEntity<List<SubmissionResponse>> getUserSubmissionsForProblem(
+            @PathVariable UUID userId,
+            @PathVariable UUID problemId) {
+
+        return ResponseEntity.ok(
+                submissionService.getAllSubmissionsByUserForProblems(userId, problemId)
+        );
     }
 }

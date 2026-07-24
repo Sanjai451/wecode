@@ -1,77 +1,107 @@
 package com.SubmissionService.SubmissionService.service.impl;
 
-import com.SubmissionService.SubmissionService.dto.SubmissionRequest;
-import com.SubmissionService.SubmissionService.dto.SubmissionResponse;
+import com.SubmissionService.SubmissionService.dto.*;
 import com.SubmissionService.SubmissionService.model.Submission;
-import com.SubmissionService.SubmissionService.model.SubmissionResult;
+import com.SubmissionService.SubmissionService.outsourcedservices.CodeExecutorClient;
 import com.SubmissionService.SubmissionService.repository.SubmissionRepository;
-import com.SubmissionService.SubmissionService.repository.SubmissionResultRepository;
 import com.SubmissionService.SubmissionService.service.SubmissionService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class SubmissionServiceImpl implements SubmissionService {
 
     private final SubmissionRepository submissionRepository;
-    private final SubmissionResultRepository submissionResultRepository;
 
-    public SubmissionServiceImpl(SubmissionRepository submissionRepository,
-                                 SubmissionResultRepository submissionResultRepository) {
+    public SubmissionServiceImpl(SubmissionRepository submissionRepository) {
         this.submissionRepository = submissionRepository;
-        this.submissionResultRepository = submissionResultRepository;
     }
+
+    @Autowired
+    private CodeExecutorClient codeExecutorClient;
 
     @Override
     public SubmissionResponse submit(SubmissionRequest request) {
+
+        // Fetch list of inputs and Expected outputs from Problem Service
+        List<InputsAndExpectedOutputs> iae = getInputAndExpData(request.getProblemId());
+        if(iae == null){
+            return SubmissionResponse.builder()
+                    .message("NO TEST CASES AVAILABLE")
+                    .build();
+        }
+
         Submission submission = Submission.builder()
                 .submissionId(UUID.randomUUID())
                 .userId(request.getUserId())
                 .problemId(request.getProblemId())
                 .language(request.getLanguage())
                 .code(request.getCode())
-                .verdict("PENDING")
                 .submittedAt(LocalDateTime.now())
                 .build();
 
+        CodeExecRequest req = new CodeExecRequest();
+        req.setCode(request.getCode());
+        req.setLang(request.getLanguage());
+
+//        ArrayList<String > inputs = new ArrayList<>();
+//        inputs.add("5 1");
+//        ArrayList<String > expectedOutputs = new ArrayList<>();
+//        expectedOutputs.add("6");
+//        req.setInputs(inputs);
+//        req.setExpectedOutputs(expectedOutputs);
+
+        req.setInputs(getInputs(iae));
+        req.setExpectedOutputs(getExpOutputs(iae));
+
+        CodeExecutionResults codeExecResp = codeExecutorClient.executeCode(req);
+
+        if(codeExecResp.getMessage().toLowerCase().contains("pass")){
+            submission.setVerdict("PASSED");
+        }
+        else{
+            submission.setVerdict("FAILED");
+        }
+
+        submission.setFailedCases(codeExecResp.getFailedCases());
+        submission.setTotalCases(codeExecResp.getTotalCases());
+        submission.setMessage(codeExecResp.getMessage());
+
         submission = submissionRepository.save(submission);
 
-        // logic for code execution
-
-        return mapToResponse(submission, List.of());
+        return mapToResponse(submission);
     }
 
     @Override
     public SubmissionResponse getSubmission(UUID submissionId) {
-        Submission submission = submissionRepository.findById(submissionId)
+        Submission submission =  submissionRepository.findById(submissionId)
                 .orElseThrow(() -> new IllegalArgumentException("Submission not found: " + submissionId));
-
-        List<SubmissionResult> results = submissionResultRepository.findBySubmissionId(submissionId);
-
-        return mapToResponse(submission, results);
+        return mapToResponse(submission);
     }
 
     @Override
-    public List<SubmissionResponse> getSubmissionsByUser(UUID userId) {
-        List<Submission> submissions = submissionRepository.findByUserIdOrderBySubmittedAtDesc(userId);
-        return submissions.stream()
-                .map(submission -> mapToResponse(submission, submissionResultRepository.findBySubmissionId(submission.getSubmissionId())))
-                .collect(Collectors.toList());
+    public List<SubmissionResponse> getAllSubmissionsByUser(UUID userId) {
+        return submissionRepository
+                .findByUserIdOrderBySubmittedAtDesc(userId)
+                .stream()
+                .map(this::mapToResponse).toList();
     }
 
     @Override
-    public List<SubmissionResponse> getSubmissionsByProblem(Integer problemId) {
-        List<Submission> submissions = submissionRepository.findByProblemIdOrderBySubmittedAtDesc(problemId);
-        return submissions.stream()
-                .map(submission -> mapToResponse(submission, submissionResultRepository.findBySubmissionId(submission.getSubmissionId())))
-                .collect(Collectors.toList());
+    public List<SubmissionResponse> getAllSubmissionsByUserForProblems(UUID userId, UUID problemId) {
+        return submissionRepository
+                .findByUserIdAndProblemIdOrderBySubmittedAtDesc(userId, problemId)
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
     }
 
-    private SubmissionResponse mapToResponse(Submission submission, List<SubmissionResult> results) {
+    private SubmissionResponse mapToResponse(Submission submission) {
         return SubmissionResponse.builder()
                 .submissionId(submission.getSubmissionId())
                 .userId(submission.getUserId())
@@ -81,7 +111,22 @@ public class SubmissionServiceImpl implements SubmissionService {
                 .runtimeMs(submission.getRuntimeMs())
                 .memoryMb(submission.getMemoryMb())
                 .submittedAt(submission.getSubmittedAt())
-                .results(results)
+                .failedCases(submission.getFailedCases())
+                .totalCases(submission.getTotalCases())
+                .message(submission.getMessage())
                 .build();
+    }
+
+    private List<InputsAndExpectedOutputs> getInputAndExpData(UUID problemId){
+        // get from Problem service
+        return null;
+    }
+
+    private ArrayList<String> getInputs(List<InputsAndExpectedOutputs> iae){
+        return new ArrayList<>(iae.stream().map(InputsAndExpectedOutputs::getInput).toList());
+    }
+
+    private ArrayList<String> getExpOutputs(List<InputsAndExpectedOutputs> iae){
+        return new ArrayList<>(iae.stream().map(InputsAndExpectedOutputs::getExpectedOutputs).toList());
     }
 }

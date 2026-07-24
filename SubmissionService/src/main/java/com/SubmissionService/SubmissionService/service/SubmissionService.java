@@ -13,7 +13,7 @@ public interface SubmissionService {
 
     SubmissionResponse getSubmission(UUID submissionId);
 
-    List<SubmissionResponse> getSubmissionsByUser(UUID userId);
+    List<SubmissionResponse> getAllSubmissionsByUser(UUID userId);
 
-    List<SubmissionResponse> getSubmissionsByProblem(Integer problemId);
+    List<SubmissionResponse> getAllSubmissionsByUserForProblems(UUID userId, UUID problemId);
 }

@@ -28,7 +28,7 @@ public class Submission {
     private UUID userId;
 
     @Column(name = "problem_id", nullable = false)
-    private Integer problemId;
+    private UUID problemId;
 
     @Column(length = 20)
     private String language;
@@ -47,4 +47,13 @@ public class Submission {
 
     @Column(name = "submitted_at")
     private LocalDateTime submittedAt;
+
+    @Column(name = "total_testcases")
+    private int totalCases;
+
+    @Column(name = "failed_testcases")
+    private int failedCases;
+
+    @Column(name = "code_output_message")
+    private String message;
 }
