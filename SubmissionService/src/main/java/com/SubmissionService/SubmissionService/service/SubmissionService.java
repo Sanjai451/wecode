@@ -15,5 +15,5 @@ public interface SubmissionService {
 
     List<SubmissionResponse> getAllSubmissionsByUser(UUID userId);
 
-    List<SubmissionResponse> getAllSubmissionsByUserForProblems(UUID userId, UUID problemId);
+    List<SubmissionResponse> getAllSubmissionsByUserForProblems(UUID userId, Long problemId);
 }

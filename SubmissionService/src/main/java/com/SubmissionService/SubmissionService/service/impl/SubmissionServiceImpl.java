@@ -3,6 +3,7 @@ package com.SubmissionService.SubmissionService.service.impl;
 import com.SubmissionService.SubmissionService.dto.*;
 import com.SubmissionService.SubmissionService.model.Submission;
 import com.SubmissionService.SubmissionService.outsourcedservices.CodeExecutorClient;
+import com.SubmissionService.SubmissionService.outsourcedservices.TestCasesClient;
 import com.SubmissionService.SubmissionService.repository.SubmissionRepository;
 import com.SubmissionService.SubmissionService.service.SubmissionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +26,15 @@ public class SubmissionServiceImpl implements SubmissionService {
     @Autowired
     private CodeExecutorClient codeExecutorClient;
 
+    @Autowired
+    private TestCasesClient testCasesClient;
+
     @Override
     public SubmissionResponse submit(SubmissionRequest request) {
 
         // Fetch list of inputs and Expected outputs from Problem Service
-        List<InputsAndExpectedOutputs> iae = getInputAndExpData(request.getProblemId());
+        List<TestCases> iae = getTestCases(request.getProblemId());
+
         if(iae == null){
             return SubmissionResponse.builder()
                     .message("NO TEST CASES AVAILABLE")
@@ -93,7 +98,7 @@ public class SubmissionServiceImpl implements SubmissionService {
     }
 
     @Override
-    public List<SubmissionResponse> getAllSubmissionsByUserForProblems(UUID userId, UUID problemId) {
+    public List<SubmissionResponse> getAllSubmissionsByUserForProblems(UUID userId, Long problemId) {
         return submissionRepository
                 .findByUserIdAndProblemIdOrderBySubmittedAtDesc(userId, problemId)
                 .stream()
@@ -117,16 +122,15 @@ public class SubmissionServiceImpl implements SubmissionService {
                 .build();
     }
 
-    private List<InputsAndExpectedOutputs> getInputAndExpData(UUID problemId){
-        // get from Problem service
-        return null;
+    private List<TestCases> getTestCases(Long problemId){
+        return testCasesClient.getTestCasesForProblem(problemId);
     }
 
-    private ArrayList<String> getInputs(List<InputsAndExpectedOutputs> iae){
-        return new ArrayList<>(iae.stream().map(InputsAndExpectedOutputs::getInput).toList());
+    private ArrayList<String> getInputs(List<TestCases> iae){
+        return new ArrayList<>(iae.stream().map(TestCases::getInput).toList());
     }
 
-    private ArrayList<String> getExpOutputs(List<InputsAndExpectedOutputs> iae){
-        return new ArrayList<>(iae.stream().map(InputsAndExpectedOutputs::getExpectedOutputs).toList());
+    private ArrayList<String> getExpOutputs(List<TestCases> iae){
+        return new ArrayList<>(iae.stream().map(TestCases::getExpectedOutput).toList());
     }
 }

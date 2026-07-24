@@ -28,7 +28,7 @@ public class Submission {
     private UUID userId;
 
     @Column(name = "problem_id", nullable = false)
-    private UUID problemId;
+    private Long problemId;
 
     @Column(length = 20)
     private String language;

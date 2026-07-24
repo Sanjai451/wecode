@@ -16,7 +16,7 @@ public class SubmissionResponse {
 
     private UUID submissionId;
     private UUID userId;
-    private UUID problemId;
+    private Long problemId;
     private String language;
     private String verdict;
     private Integer runtimeMs;

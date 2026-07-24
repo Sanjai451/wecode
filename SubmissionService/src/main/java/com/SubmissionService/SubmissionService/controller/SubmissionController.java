@@ -42,7 +42,7 @@ public class SubmissionController {
     @GetMapping("/user/{userId}/problem/{problemId}")
     public ResponseEntity<List<SubmissionResponse>> getUserSubmissionsForProblem(
             @PathVariable UUID userId,
-            @PathVariable UUID problemId) {
+            @PathVariable Long problemId) {
 
         return ResponseEntity.ok(
                 submissionService.getAllSubmissionsByUserForProblems(userId, problemId)

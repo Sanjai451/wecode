@@ -7,7 +7,7 @@ import java.util.UUID;
 @Data
 public class SubmissionRequest {
     private UUID userId;
-    private UUID problemId;
+    private Long problemId;
     private String language;
     private String code;
 }
