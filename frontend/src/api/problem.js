@@ -4,7 +4,7 @@ const problems = [
     title: 'Two Sum',
     difficulty: 'Easy',
     category: 'Arrays',
-    description: 'Find two numbers in an array that add up to a target value.',
+    description: 'Given an array of integers, return indices of the two numbers such that they add up to a specific target.',
     tags: ['Hash Map', 'Array'],
   },
   {
