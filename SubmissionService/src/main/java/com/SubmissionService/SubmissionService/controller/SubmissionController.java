@@ -25,6 +25,12 @@ public class SubmissionController {
         return ResponseEntity.accepted().body(response);
     }
 
+    @PostMapping("/submit/sample")
+    public ResponseEntity<SubmissionResponse> submitForSampleTestCases(@RequestBody SubmissionRequest request) {
+        SubmissionResponse response = submissionService.submitForSampleTestCases(request);
+        return ResponseEntity.accepted().body(response);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<SubmissionResponse> getSubmission(@PathVariable UUID id) {
         return ResponseEntity.ok(submissionService.getSubmission(id));

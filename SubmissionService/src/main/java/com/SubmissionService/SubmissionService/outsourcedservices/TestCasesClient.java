@@ -16,4 +16,7 @@ public interface TestCasesClient {
     @GetMapping("/testcases/problem/{problemId}")
     List<TestCases> getTestCasesForProblem(@PathVariable Long problemId);
 
+    @GetMapping("/testcases/problem/{problemId}")
+    List<TestCases> getSampleTestCasesForProblem(@PathVariable Long problemId);
+
 }

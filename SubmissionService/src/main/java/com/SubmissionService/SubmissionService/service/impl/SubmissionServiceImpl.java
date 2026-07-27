@@ -83,6 +83,52 @@ public class SubmissionServiceImpl implements SubmissionService {
     }
 
     @Override
+    public SubmissionResponse submitForSampleTestCases(SubmissionRequest request) {
+
+        // Fetch list of inputs and Expected outputs from Problem Service
+        List<TestCases> iae = getSampleTestCases(request.getProblemId());
+
+        if(iae == null){
+            return SubmissionResponse.builder()
+                    .message("NO TEST CASES AVAILABLE")
+                    .build();
+        }
+
+        Submission submission = Submission.builder()
+                .submissionId(UUID.randomUUID())
+                .userId(request.getUserId())
+                .problemId(request.getProblemId())
+                .language(request.getLanguage())
+                .code(request.getCode())
+                .submittedAt(LocalDateTime.now())
+                .build();
+
+        CodeExecRequest req = new CodeExecRequest();
+        req.setCode(request.getCode());
+        req.setLang(request.getLanguage());
+
+        req.setInputs(getInputs(iae));
+        req.setExpectedOutputs(getExpOutputs(iae));
+
+        CodeExecutionResults codeExecResp = codeExecutorClient.executeCode(req);
+
+        if(codeExecResp.getMessage().toLowerCase().contains("pass")){
+            submission.setVerdict("PASSED");
+        }
+        else{
+            submission.setVerdict("FAILED");
+        }
+
+        submission.setFailedCases(codeExecResp.getFailedCases());
+        submission.setTotalCases(codeExecResp.getTotalCases());
+        submission.setMessage(codeExecResp.getMessage());
+
+        submission = submissionRepository.save(submission);
+
+        return mapToResponse(submission);
+    }
+
+    @Override
     public SubmissionResponse getSubmission(UUID submissionId) {
         Submission submission =  submissionRepository.findById(submissionId)
                 .orElseThrow(() -> new IllegalArgumentException("Submission not found: " + submissionId));
@@ -124,6 +170,10 @@ public class SubmissionServiceImpl implements SubmissionService {
 
     private List<TestCases> getTestCases(Long problemId){
         return testCasesClient.getTestCasesForProblem(problemId);
+    }
+
+    private List<TestCases> getSampleTestCases(Long problemId){
+        return testCasesClient.getSampleTestCasesForProblem(problemId);
     }
 
     private ArrayList<String> getInputs(List<TestCases> iae){

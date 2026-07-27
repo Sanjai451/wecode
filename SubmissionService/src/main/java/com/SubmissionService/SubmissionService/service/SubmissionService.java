@@ -11,6 +11,8 @@ public interface SubmissionService {
 
     SubmissionResponse submit(SubmissionRequest request);
 
+    SubmissionResponse submitForSampleTestCases(SubmissionRequest request);
+
     SubmissionResponse getSubmission(UUID submissionId);
 
     List<SubmissionResponse> getAllSubmissionsByUser(UUID userId);
