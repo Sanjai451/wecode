@@ -13,3 +13,15 @@ export async function submitCode(data) {
     throw error; 
   }
 }
+
+export async function submitTestCase(data) {
+  try {
+    const response = await axios.post(URL + "/sample", data);
+    
+    return response.data; 
+  } catch (error) {
+    console.error('API Error:', error.message);
+    
+    throw error; 
+  }
+}

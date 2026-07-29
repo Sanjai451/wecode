@@ -624,6 +624,188 @@ p {
 .editor-shell .cm-editor {
   min-height: 320px;
 }
+.problem-content pre,
+.card pre {
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-family: inherit;
+    font-size: 15px;
+    line-height: 1.7;
+    margin: 0;
+}
+
+.problem-limits {
+    display: flex;
+    gap: 40px;
+    margin-top: 8px;
+}
+.option-tab {
+    display: flex;
+    gap:4px;
+}
+
+.option-tab button {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: #f7f6f6;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border : 1px solid ;
+}
+.submission-table{
+  border: 1px solid;
+  border-radius: 10px;
+  padding:5px;
+  width:100%;
+}
+
+/* ===============================
+   Submission Result (Dark Theme)
+=================================*/
+
+.submission-result {
+    margin: 18px 0;
+    padding: 20px;
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    animation: fadeIn .25s ease;
+}
+
+/* Header */
+
+.submission-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.submission-header h2 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.submission-language {
+    padding: 6px 14px;
+    border-radius: 20px;
+    background: #21262d;
+    color: #c9d1d9;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+/* ===============================
+   Stats
+=================================*/
+
+.submission-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.submission-item {
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 10px;
+    padding: 18px;
+    transition: .2s ease;
+}
+
+.submission-item:hover {
+    border-color: #58a6ff;
+}
+
+.submission-item .label {
+    display: block;
+    color: #8b949e;
+    font-size: 13px;
+    margin-bottom: 8px;
+}
+
+.submission-item .value {
+    color: #f0f6fc;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+/* ===============================
+   Message
+=================================*/
+
+.submission-message {
+    margin-top: 10px;
+    padding: 16px;
+    background: #0d1117;
+    border-radius: 10px;
+    border-left: 4px solid #58a6ff;
+}
+
+.submission-message h4 {
+    margin: 0 0 10px;
+    color: #f0f6fc;
+}
+
+.submission-message p {
+    margin: 0;
+    color: #c9d1d9;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+/* ===============================
+   Verdict Colors
+=================================*/
+
+.accepted {
+    border-left: 5px solid #2ea043;
+}
+
+.accepted h2 {
+    color: #3fb950;
+}
+
+.wrong-answer {
+    border-left: 5px solid #f85149;
+}
+
+.wrong-answer h2 {
+    color: #f85149;
+}
+
+.runtime-error {
+    border-left: 5px solid #ff7b72;
+}
+
+.runtime-error h2 {
+    color: #ff7b72;
+}
+
+.compilation-error {
+    border-left: 5px solid #d29922;
+}
+
+.compilation-error h2 {
+    color: #d29922;
+}
+
+.time-limit-exceeded {
+    border-left: 5px solid #a371f7;
+}
+
+.time-limit-exceeded h2 {
+    color: #a371f7;
+}
+
+
 
 @media (max-width: 980px) {
   .problem-page {

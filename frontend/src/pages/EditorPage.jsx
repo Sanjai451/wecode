@@ -1,7 +1,8 @@
 import { useState } from "react";
 import Editor from "@monaco-editor/react";
+import SubmissionResults from "../components/SubmissionResults";
 
-function EditorPage({handleLanguageChange, code, language, setCode, setLanguage}) {
+function EditorPage({handleLanguageChange, code, language, setCode, setLanguage, submissionResults}) {
 
   return (
     <div className="editor-shell">
@@ -37,6 +38,7 @@ function EditorPage({handleLanguageChange, code, language, setCode, setLanguage}
           formatOnType: true,
         }}
       />
+      <SubmissionResults submission={submissionResults}/>
     </div>
   );
 }
